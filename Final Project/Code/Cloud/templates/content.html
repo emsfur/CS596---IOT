@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP32 Car Dashboard</title>
+  <style>
+    body {
+      background-color: #393535;
+      color: white;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+    }
+    h1, h2 {
+      margin-bottom: 10px;
+    }
+    .dashboard {
+      border: 2px solid #444;
+      padding: 20px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 800px;
+      border-radius: 10px;
+      background-color: #f3d721;
+      box-shadow: 0 0 15px rgba(255, 0, 8, 0.2);
+    }
+    .lights {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .light {
+      filter: grayscale(50%) brightness(0.7);
+      opacity: 0.5;
+      transition: 0.3s;
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+    }
+    .light.on {
+      filter: none;
+      opacity: 1;
+    }
+    .graph {
+      border: 2px dashed #888;
+      padding: 20px;
+      margin-top: 10px;
+      background-color: #1c1c1c;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .graph img {
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Car Dashboard</h1>
+
+  <div class="lights">
+    <img id="engine" class="light" src= "{{ url_for('static', filename='engin_check.jpg') }}" alt="Engine">
+    <img id="tire" class="light"  src= "{{ url_for('static', filename='tyre_pressure.png') }}" alt="Tire">
+    <img id="oil" class="light"  src= "{{ url_for('static', filename='oil_level.png') }}" alt="Oil">
+    <img id="battery" class="light"  src= "{{ url_for('static', filename='battery_light.jpg') }}" alt="Battery">
+  </div>
+
+  <div class="graph">
+        <img src="{{ url_for('static', filename='generated/speed_plot.png') }}" alt="Speed Graph" style="width: 50%;">
+    </div>
+  </div>
+
+
+  <script>
+    // receives data from python script to ensure proper visuals (Glowing/Dim light)
+    const lights = [
+      { id: "engine", value: "{{ engine_light }}" },
+      { id: "tire", value: "{{ tire_light }}" },
+      { id: "oil", value: "{{ oil_light }}" },
+      { id: "battery", value: "{{ battery_light }}" }
+    ];
+
+    // simply adds/removes image brightness based on light status
+    lights.forEach(light => {
+      if (light.value === "ON") {
+        document.getElementById(light.id).classList.add("on");
+      } else {
+        document.getElementById(light.id).classList.remove("on");
+      }
+    });
+  </script>
+</body>
+</html>
